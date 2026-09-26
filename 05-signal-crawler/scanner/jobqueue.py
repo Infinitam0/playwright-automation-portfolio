@@ -4,8 +4,9 @@ The orchestrator hands each worker a Job by calling `claim_one`, which atomicall
 picks the oldest eligible pending row, flips it to `running`, and stamps the
 claimant. Workers terminate jobs with `mark_done` / `mark_failed` / `defer`.
 
-`recover_stale` runs at startup: any `running` row older than the timeout (its
-claimant has presumably crashed) gets flipped back to `pending`. Combined with
+`recover_stale` runs at startup. The scanner is single-process, so the
+orchestrator recovers every `running` row (older_than_minutes=0): its claimant
+is a crashed earlier process. Combined with
 the upstream inbox UNIQUE constraint, this gives at-least-once delivery without
 duplicate side-effects.
 """
@@ -126,7 +127,7 @@ class JobQueue:
                 claimed_by=NULL,
                 claimed_at=NULL
             WHERE status='running'
-              AND claimed_at < datetime('now', '-{int(older_than_minutes)} minutes')
+              AND claimed_at <= datetime('now', '-{int(older_than_minutes)} minutes')
             """,
         )
         recovered = cur.rowcount

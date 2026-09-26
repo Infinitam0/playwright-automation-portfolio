@@ -16,7 +16,7 @@ not report a listing as sold just because a crawl was cut short.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/diagram-dark.png">
-  <img src="docs/diagram.png" alt="State diagram of a tracked listing: each new listing is added to the Google Sheet as Available (with an optional Telegram alert) and, when the opt-in daily check is on, closes as Sold or under offer, or as Off the market once a complete crawl no longer finds it.">
+  <img src="docs/diagram.png" alt="State diagram of a tracked listing: each new listing is added to the Google Sheet as Available (with an optional Telegram alert), can move to Under offer and, when the opt-in daily check is on, closes as Sold once the portal shows it sold, or as Off the market once a complete crawl no longer finds it.">
 </picture>
 
 1. **Load state**: open the Google Sheet (service account), write headers if
@@ -180,6 +180,10 @@ monitor.
 
 ## Tests
 
-There are no automated tests in this project. The pure functions
-(`parsers.py`, `lifecycle.classify_transition`, `reporting.compute_summary`) are
-the natural place to add them.
+`tests/test_lifecycle.py` pins the lifecycle sweep's sold-view handling: an
+under-offer listing stays open, and only a sold one closes as a sale.
+
+```bash
+pip install -r requirements.txt pytest
+python -m pytest -q tests
+```

@@ -139,9 +139,9 @@
 <text x="140" y="512" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">each item stored once</text>
 <text x="140" y="540" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">cursors</text>
 <text x="140" y="560" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">where the next job starts</text>
-<!-- "30+ min" = scanner/jobqueue.py recover_stale(older_than_minutes=30), run once at startup -->
+<!-- crash recovery = orchestrator._setup -> recover_stale(older_than_minutes=0): every Running job returns to Pending on startup -->
 <text x="920" y="52" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="end">Process killed mid-run? On the next start,</text>
-<text x="920" y="72" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="end">jobs claimed 30+ min earlier go back</text>
+<text x="920" y="72" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="end">every job left in Running goes back</text>
 <text x="920" y="92" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="end">to Pending. Items already saved</text>
 <text x="920" y="112" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="end">are updated, never duplicated.</text>
 <path d="M 712 88 Q 616 92 536 124" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>

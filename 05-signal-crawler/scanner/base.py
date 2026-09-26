@@ -42,6 +42,11 @@ class BaseScraper(ABC):
 
     name: ClassVar[str] = ""
     default_rate_per_min: ClassVar[int] = 30
+    # True only when items are yielded in cursor order (a position that only
+    # moves forward), so committing after every item is safe and lets a failed
+    # job's successor resume mid-way. Newest-first high-water marks must leave
+    # this False: their cursor is committed once the whole job succeeds.
+    checkpoint_cursor: ClassVar[bool] = False
 
     async def setup(self, ctx: Any = None) -> None:
         """Acquire whatever client/state the scraper needs. Default is no-op.
@@ -70,8 +75,9 @@ class BaseScraper(ABC):
 
         - `since_cursor` is the last cursor previously committed for this source,
           or None on the first run.
-        - When `RawItem.cursor` is set on a yielded item, the orchestrator commits
-          it to the cursors table after the inbox upsert succeeds.
+        - When `RawItem.cursor` is set on yielded items, the orchestrator commits
+          the last one to the cursors table once the whole job succeeds (and
+          after every item too if `checkpoint_cursor` is True).
         - To request a pause, raise RateLimited(retry_after).
         - When the source structure has shifted, raise SelectorBroken("...").
         """

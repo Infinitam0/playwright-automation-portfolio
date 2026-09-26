@@ -212,14 +212,17 @@ async def run_lifecycle_sweep(
             prev = normalize_status(info.get("status_current", "")) or STATUS_AVAILABLE
 
             # The portal's sold view is the definitive signal: if this open listing
-            # appears there, it sold / went under offer — close it precisely.
+            # appears there as sold, close it precisely. Its default filter also
+            # returns under-offer listings, which are not a sale: that is a
+            # non-terminal change, exactly as classify_transition treats an
+            # under-offer badge.
             sold_status = observation.sold_status_by_id.get(listing_id)
             if sold_status:
-                t = Transition(
-                    normalize_status(sold_status) or STATUS_SOLD,
-                    closed=True,
-                    sold=True,
-                )
+                status = normalize_status(sold_status) or STATUS_SOLD
+                if status == STATUS_UNDER_BID:
+                    t = Transition(STATUS_UNDER_BID, closed=False, sold=None)
+                else:
+                    t = Transition(status, closed=True, sold=True)
             elif do_disappearance:
                 still_present = listing_id in observation.seen_active_ids
                 badge = normalize_status(observation.badge_by_id.get(listing_id, "")) or None

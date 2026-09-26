@@ -12,6 +12,7 @@ Covers:
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterator
 from pathlib import Path
 
@@ -178,5 +179,113 @@ async def test_no_scraper_for_source_marks_job_failed(tmp_db: Path, migrations_d
     try:
         rows = await (await conn.execute("SELECT * FROM jobs")).fetchall()
         assert rows == []
+    finally:
+        await conn.close()
+
+
+class FailsMidwayHighWaterScraper(BaseScraper):
+    """Newest-first source (like HN/Reddit): every item carries the running
+    high-water mark, then the job dies before the older items are reached."""
+
+    default_rate_per_min = 6000
+
+    async def run(self, since_cursor: str | None) -> AsyncIterator[RawItem]:
+        yield RawItem(
+            source="hw",
+            source_item_id="newest",
+            url="https://example.test/n",
+            raw_content="newest",
+            cursor="300",
+        )
+        raise RuntimeError("network died before the older items")
+
+
+@pytest.mark.asyncio
+async def test_failed_job_does_not_advance_cursor(tmp_db: Path, migrations_dir: Path) -> None:
+    # A high-water cursor committed mid-job would make the next job skip every
+    # older item the failed job never reached.
+    await db_module.migrate(tmp_db, migrations_dir)
+    cfg = _make_cfg(tmp_db, {"hw": 6000})
+    orch = Orchestrator(cfg, {"hw": FailsMidwayHighWaterScraper}, drain_poll_seconds=0.05)
+    await orch.run(once=True)
+
+    conn = await db_module.connect(tmp_db)
+    try:
+        job = await (await conn.execute("SELECT status FROM jobs WHERE source='hw'")).fetchone()
+        assert job["status"] == "failed"
+        inbox = await (
+            await conn.execute("SELECT COUNT(*) FROM inbox WHERE source='hw'")
+        ).fetchone()
+        assert inbox[0] == 1  # the item it did fetch is kept
+        cursor = await (
+            await conn.execute("SELECT max_id FROM cursors WHERE source='hw'")
+        ).fetchone()
+        assert cursor is None
+    finally:
+        await conn.close()
+
+
+@pytest.mark.asyncio
+async def test_restart_recovers_job_orphaned_by_a_recent_crash(
+    tmp_db: Path, migrations_dir: Path
+) -> None:
+    # Simulate a process killed seconds ago: its job is still `running`. The
+    # scanner is single-process, so on startup that job is an orphan whatever
+    # its age; leaving it would block the source and hang `run --once`.
+    await db_module.migrate(tmp_db, migrations_dir)
+    conn = await db_module.connect(tmp_db)
+    try:
+        await conn.execute(
+            "INSERT INTO jobs(source, status, claimed_by, claimed_at, attempts) "
+            "VALUES ('fake', 'running', 'w0', CURRENT_TIMESTAMP, 1)"
+        )
+        await conn.commit()
+    finally:
+        await conn.close()
+
+    cfg = _make_cfg(tmp_db, {"fake": 6000})
+    orch = Orchestrator(cfg, {"fake": FakeScraper}, drain_poll_seconds=0.05)
+    await asyncio.wait_for(orch.run(once=True), timeout=10)
+
+    conn = await db_module.connect(tmp_db)
+    try:
+        statuses = [
+            r[0]
+            for r in await (
+                await conn.execute("SELECT status FROM jobs WHERE source='fake'")
+            ).fetchall()
+        ]
+        assert statuses == ["done"]
+        inbox = await (
+            await conn.execute("SELECT COUNT(*) FROM inbox WHERE source='fake'")
+        ).fetchone()
+        assert inbox[0] == 3
+    finally:
+        await conn.close()
+
+
+class FailsMidwayCheckpointScraper(FailsMidwayHighWaterScraper):
+    """In-order position cursor (like AlternativeTo's catalog index)."""
+
+    checkpoint_cursor = True
+
+
+@pytest.mark.asyncio
+async def test_checkpoint_scraper_keeps_progress_from_failed_job(
+    tmp_db: Path, migrations_dir: Path
+) -> None:
+    # An in-order position is safe to commit per item, so the next job resumes
+    # after the last item the failed job saved.
+    await db_module.migrate(tmp_db, migrations_dir)
+    cfg = _make_cfg(tmp_db, {"hw": 6000})
+    orch = Orchestrator(cfg, {"hw": FailsMidwayCheckpointScraper}, drain_poll_seconds=0.05)
+    await orch.run(once=True)
+
+    conn = await db_module.connect(tmp_db)
+    try:
+        cursor = await (
+            await conn.execute("SELECT max_id FROM cursors WHERE source='hw'")
+        ).fetchone()
+        assert cursor[0] == "300"
     finally:
         await conn.close()

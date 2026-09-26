@@ -91,7 +91,9 @@ class Orchestrator:
         self._queue = JobQueue(self._conn)
         self._rl = RateLimiter({n: s.rate_per_min for n, s in self._cfg.sources.items()})
         await self._seed_sources()
-        recovered = await self._queue.recover_stale()
+        # Single-process by design, so any `running` job at startup belongs to a
+        # dead process, however recently it was claimed.
+        recovered = await self._queue.recover_stale(older_than_minutes=0)
         if recovered:
             log.info("orchestrator.recover", stale_jobs=recovered)
         log.info(
@@ -245,6 +247,11 @@ class Orchestrator:
             attempt=job.attempts,
         )
         items_count = 0
+        # Committed when the job completes: HN/Reddit emit a newest-first
+        # high-water mark, so committing it mid-job would make the next job skip
+        # every older item a failed job never reached. Scrapers with an
+        # in-order position (checkpoint_cursor) also commit per item.
+        last_cursor: str | None = None
         try:
             await scraper.setup()
             try:
@@ -261,10 +268,14 @@ class Orchestrator:
                     await self._rl.acquire(job.source)
                     await self._upsert_inbox(item)
                     if item.cursor:
-                        await self._commit_cursor(item.source, item.cursor)
+                        last_cursor = item.cursor
+                        if scraper.checkpoint_cursor:
+                            await self._commit_cursor(job.source, item.cursor)
                     items_count += 1
             finally:
                 await scraper.teardown()
+            if last_cursor:
+                await self._commit_cursor(job.source, last_cursor)
             await self._queue.mark_done(job.id)
             log.info("job.done", job_id=job.id, source=job.source, items=items_count)
         except RateLimited as e:

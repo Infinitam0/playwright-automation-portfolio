@@ -101,8 +101,8 @@ class HackernewsScraper(BaseScraper):
                     ts = int(hit.get("created_at_i") or 0)
                     if ts > max_seen:
                         max_seen = ts
-                    # Use the running max-seen as the cursor on every yield so a
-                    # mid-run crash leaves us with a safe high-water mark.
+                    # The running max-seen rides on every item; the orchestrator
+                    # commits the last one only when the whole job succeeds.
                     yield RawItem(
                         source=item.source,
                         source_item_id=item.source_item_id,

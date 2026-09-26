@@ -58,82 +58,97 @@
     <p class="eyebrow">State machine · Listing monitor</p>
     <h1>Listing lifecycle</h1>
 
-    <svg viewBox="0 24 960 532" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="03-listing-monitor-title 03-listing-monitor-desc">
+    <svg viewBox="0 24 960 548" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="03-listing-monitor-title 03-listing-monitor-desc">
       <title id="03-listing-monitor-title">Listing lifecycle</title>
-      <desc id="03-listing-monitor-desc">State diagram of a tracked listing: each new listing is added to the Google Sheet as Available (with an optional Telegram alert) and, when the opt-in daily check is on, closes as Sold or under offer, or as Off the market once a complete crawl no longer finds it.</desc>
+      <desc id="03-listing-monitor-desc">State diagram of a tracked listing: each new listing is added to the Google Sheet as Available (with an optional Telegram alert), can move to Under offer and, when the opt-in daily check is on, closes as Sold once the portal shows it sold, or as Off the market once a complete crawl no longer finds it.</desc>
       <!-- Source of truth for the rules drawn here: the "most listings vanished" sanity check
-           (>=10 open and <50% seen -> disappearance skipped) lives in src/lifecycle.py run_lifecycle_sweep;
-           the sold view's statuses come from src/scraper/site_profile.py DEFAULT_SOLD_STATUS_FILTER
-           (under_offer + sold), and every sold-view hit closes as a sale. The daily check is
-           lifecycle_sweep_enabled (default False) and Telegram is telegram_enabled (default False), src/config.py. -->
+           (>=10 open and <50% seen -> disappearance skipped) lives in src/lifecycle.py run_lifecycle_sweep.
+           The sold view's statuses come from src/scraper/site_profile.py DEFAULT_SOLD_STATUS_FILTER
+           (under_offer + sold): a sold hit closes as a sale, an under-offer hit stays open as Under offer.
+           The daily check is lifecycle_sweep_enabled (default False) and Telegram is telegram_enabled
+           (default False), both in src/config.py. -->
       <defs>
         <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
         <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
       </defs>
 
-      <rect x="0" y="24" width="960" height="532" fill="#f5f5f5"/>
+      <rect x="0" y="24" width="960" height="548" fill="#f5f5f5"/>
 
       <!-- Composite states (zones), painted first -->
-      <rect x="224" y="64" width="208" height="328" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.28)" stroke-width="1"/>
+      <rect x="224" y="64" width="240" height="344" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.28)" stroke-width="1"/>
       <text x="240" y="92" fill="#4f5d75" font-size="12" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.1em">OPEN · CHECKED DAILY</text>
       <text x="240" y="108" fill="#4f5d75" font-size="12" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.1em">(OPT-IN)</text>
-      <rect x="632" y="64" width="288" height="328" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.28)" stroke-width="1"/>
+      <rect x="632" y="64" width="288" height="344" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.28)" stroke-width="1"/>
       <text x="648" y="92" fill="#4f5d75" font-size="12" font-weight="500" font-family="'Geist Mono', monospace" letter-spacing="0.1em">CLOSED · DAYS ON MARKET SAVED</text>
 
-      <!-- Transitions (before nodes): r=8 elbows out of Available's top and bottom edges -->
-      <line x1="56" y1="240" x2="240" y2="240" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
-      <path d="M 328,192 V 160 Q 328,152 336,152 H 648" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-      <path d="M 328,288 V 320 Q 328,328 336,328 H 648" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- Transitions (before nodes). Both closing arrows leave the OPEN group's edge: they apply to any open state. -->
+      <line x1="56" y1="168" x2="240" y2="168" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <line x1="272" y1="216" x2="272" y2="296" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="464" y1="168" x2="648" y2="168" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="464" y1="344" x2="648" y2="344" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
 
       <!-- Transition labels: event above, [condition] below -->
-      <rect x="92" y="220" width="96" height="12" rx="2" fill="#f5f5f5"/>
-      <text x="140" y="230" fill="#eb6c36" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NEW LISTING</text>
-      <rect x="64" y="248" width="152" height="12" rx="2" fill="#f5f5f5"/>
-      <text x="140" y="258" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">[EVERY SEARCH RUN]</text>
-      <rect x="480" y="132" width="104" height="12" rx="2" fill="#f5f5f5"/>
-      <text x="532" y="142" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">IN SOLD VIEW</text>
-      <rect x="444" y="160" width="176" height="12" rx="2" fill="#f5f5f5"/>
-      <text x="532" y="170" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">[SOLD OR UNDER OFFER]</text>
-      <rect x="484" y="308" width="96" height="12" rx="2" fill="#f5f5f5"/>
-      <text x="532" y="318" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DISAPPEARED</text>
-      <rect x="460" y="336" width="144" height="12" rx="2" fill="#f5f5f5"/>
-      <text x="532" y="346" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">[FULL CRAWL ONLY]</text>
+      <rect x="92" y="148" width="96" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="140" y="158" fill="#eb6c36" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NEW LISTING</text>
+      <rect x="64" y="176" width="152" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="140" y="186" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">[EVERY SEARCH RUN]</text>
+      <rect x="284" y="236" width="96" height="12" rx="2" fill="#efeff0"/>
+      <text x="284" y="246" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" letter-spacing="0.06em">UNDER OFFER</text>
+      <rect x="284" y="256" width="168" height="12" rx="2" fill="#efeff0"/>
+      <text x="284" y="266" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" letter-spacing="0.06em">[BADGE OR SOLD VIEW]</text>
+      <rect x="496" y="148" width="104" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="548" y="158" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">IN SOLD VIEW</text>
+      <rect x="520" y="176" width="56" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="548" y="186" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">[SOLD]</text>
+      <rect x="500" y="324" width="96" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="548" y="334" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DISAPPEARED</text>
+      <rect x="476" y="352" width="144" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="548" y="362" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">[FULL CRAWL ONLY]</text>
+
+      <!-- Origin dots on the OPEN group's border: the closing transitions start at the group, not at a state -->
+      <circle cx="464" cy="168" r="3" fill="#4f5d75"/>
+      <circle cx="464" cy="344" r="3" fill="#4f5d75"/>
 
       <!-- Start -->
-      <circle cx="48" cy="240" r="6" fill="#2d3142"/>
+      <circle cx="48" cy="168" r="6" fill="#2d3142"/>
 
       <!-- States -->
-      <rect x="240" y="192" width="176" height="96" rx="8" fill="#f5f5f5"/>
-      <rect x="240" y="192" width="176" height="96" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-      <text x="328" y="232" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Available</text>
-      <text x="328" y="256" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">new row in the sheet</text>
-      <text x="328" y="272" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">Telegram alert (if on)</text>
-      <rect x="648" y="104" width="256" height="96" rx="8" fill="#f5f5f5"/>
-      <rect x="648" y="104" width="256" height="96" rx="8" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
-      <text x="776" y="144" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Sold or under offer</text>
-      <text x="776" y="168" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">counted as a sale</text>
-      <text x="776" y="184" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">feeds the days-to-sell report</text>
-      <rect x="648" y="280" width="256" height="96" rx="8" fill="#f5f5f5"/>
-      <rect x="648" y="280" width="256" height="96" rx="8" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
-      <text x="776" y="320" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Off the market</text>
-      <text x="776" y="344" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">reason unknown</text>
-      <text x="776" y="360" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">not counted as a sale</text>
+      <rect x="240" y="120" width="208" height="96" rx="8" fill="#f5f5f5"/>
+      <rect x="240" y="120" width="208" height="96" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="344" y="160" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Available</text>
+      <text x="344" y="184" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">new row in the sheet</text>
+      <text x="344" y="200" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">Telegram alert (if on)</text>
+      <rect x="240" y="296" width="208" height="96" rx="8" fill="#f5f5f5"/>
+      <rect x="240" y="296" width="208" height="96" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="344" y="336" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Under offer</text>
+      <text x="344" y="360" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">status + date updated</text>
+      <text x="344" y="376" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">still on the market</text>
+      <rect x="648" y="120" width="256" height="96" rx="8" fill="#f5f5f5"/>
+      <rect x="648" y="120" width="256" height="96" rx="8" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+      <text x="776" y="160" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Sold</text>
+      <text x="776" y="184" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">counted as a sale</text>
+      <text x="776" y="200" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">feeds the days-to-sell report</text>
+      <rect x="648" y="296" width="256" height="96" rx="8" fill="#f5f5f5"/>
+      <rect x="648" y="296" width="256" height="96" rx="8" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+      <text x="776" y="336" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Off the market</text>
+      <text x="776" y="360" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">reason unknown</text>
+      <text x="776" y="376" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle">not counted as a sale</text>
 
       <!-- Callout on the disappearance guard -->
-      <path d="M 456,436 H 452 Q 444,436 444,428 V 336" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
-      <circle cx="444" cy="328" r="2" fill="#2d3142"/>
-      <text x="464" y="440" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif">Only a complete crawl can mark a listing gone,</text>
-      <text x="464" y="460" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif">and not if it misses over half the open listings.</text>
+      <path d="M 548,380 V 444 Q 548,452 556,452 H 560" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="548" cy="376" r="2" fill="#2d3142"/>
+      <text x="568" y="456" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif">Only a complete crawl can mark a listing gone,</text>
+      <text x="568" y="476" fill="#2d3142" font-size="16" font-style="italic" font-family="'Instrument Serif', serif">and not if it misses over half the open listings.</text>
 
       <!-- Legend strip -->
-      <line x1="40" y1="488" x2="920" y2="488" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
-      <text x="40" y="520" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
-      <circle cx="132" cy="516" r="5" fill="#2d3142"/>
-      <text x="144" y="520" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif">found by a search run</text>
-      <rect x="312" y="508" width="24" height="16" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-      <text x="344" y="520" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif">status kept in the listing’s Google Sheet row</text>
-      <line x1="660" y1="516" x2="684" y2="516" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-      <text x="696" y="520" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif">what the bot saw [condition]</text>
+      <line x1="40" y1="504" x2="920" y2="504" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+      <text x="40" y="536" fill="#4f5d75" font-size="12" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+      <circle cx="132" cy="532" r="5" fill="#2d3142"/>
+      <text x="144" y="536" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif">found by a search run</text>
+      <rect x="312" y="524" width="24" height="16" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="344" y="536" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif">status kept in the listing’s Google Sheet row</text>
+      <line x1="660" y1="532" x2="684" y2="532" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <text x="696" y="536" fill="#4f5d75" font-size="12" font-family="'Geist', sans-serif">what the bot saw [condition]</text>
     </svg>
   </div>
 </body>

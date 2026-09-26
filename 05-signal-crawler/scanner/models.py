@@ -13,8 +13,9 @@ class RawItem:
 
     `raw_content` is the verbatim source text used for both extraction and
     deduplication (via the SHA-256 hash). When `cursor` is set, the orchestrator
-    commits it to the cursors table after the inbox upsert succeeds — this is
-    how scrapers express durable progress.
+    commits the job's last cursor to the cursors table once the whole job
+    succeeds (see `BaseScraper.checkpoint_cursor` for per-item commits) — this
+    is how scrapers express durable progress.
     """
 
     source: str

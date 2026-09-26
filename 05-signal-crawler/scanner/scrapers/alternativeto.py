@@ -38,6 +38,7 @@ log = get_logger(__name__)
 @register_scraper("alternativeto")
 class AlternativeToScraper(BaseScraper):
     default_rate_per_min: ClassVar[int] = 20
+    checkpoint_cursor: ClassVar[bool] = True  # catalog position, yielded in order
 
     BASE_URL: ClassVar[str] = "https://alternativeto.net"
     NAV_TIMEOUT_MS: ClassVar[int] = 15_000
