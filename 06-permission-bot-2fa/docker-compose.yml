@@ -1,0 +1,20 @@
+# Permission bot - Docker Compose
+#
+# Usage:
+#   docker compose up --build        (run once)
+#   docker compose up --build -d     (run in background)
+#   docker compose logs              (view output)
+
+services:
+  permission-bot:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - HEADLESS=true
+      - LOG_DIR=/app/logs
+    volumes:
+      # Mount the permissions Excel file (read-only)
+      - ./permissions.xlsx:/app/permissions.xlsx:ro
+      # Mount logs directory so output persists on host
+      - ./logs:/app/logs:rw

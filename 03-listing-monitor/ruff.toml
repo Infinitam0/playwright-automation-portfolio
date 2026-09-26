@@ -1,0 +1,11 @@
+line-length = 110
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+# try/except-pass and nested ifs kept as in the original code
+ignore = ["SIM102", "SIM105", "SIM108"]
+
+[lint.per-file-ignores]
+# sys.path is set up before the src.* imports so `python src/main.py` works
+"src/main.py" = ["E402"]

@@ -1,0 +1,26 @@
+# Signal Crawler — canonical configuration.
+# No environment-variable fallbacks. Edit this file to change behavior.
+
+[db]
+path = "./scanner.sqlite"
+
+[runtime]
+workers = 3
+log_level = "INFO"
+log_format = "json"        # "json" or "console"
+
+[proxy]
+# v2 — currently unused. Leave empty for v1.
+url = ""
+
+[sources.hackernews]
+enabled = true
+rate_per_min = 60
+
+[sources.alternativeto]
+enabled = true
+rate_per_min = 20
+
+[sources.reddit]
+enabled = true
+rate_per_min = 30

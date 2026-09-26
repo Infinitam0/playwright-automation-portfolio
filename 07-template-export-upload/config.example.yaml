@@ -1,0 +1,17 @@
+# Copy to config.yaml and fill in. PORTAL_BASE_URL (env) overrides portal.entry_url.
+portal:
+  entry_url: https://portal.example.com/                               # SSO entry page
+  app_url: https://portal.example.com/app/home  # app domain; visited after SSO to warm up its session
+  sso_button_name: Sign in with SSO                                     # UI label on the target site
+  account_name: Jane Doe                                                # account tile on the IdP picker, if shown
+
+browser:
+  headless: false
+  timeout_ms: 30000
+  channel: msedge            # or: chrome
+  profile_name: Default
+  user_data_dir: ""          # empty = the default Edge/Chrome user data dir
+
+output:
+  filename: templates_export.xlsx
+  sheet_name: Templates

@@ -1,0 +1,22 @@
+# Hard exclusions applied during scoring. A candidate matching ANY excluded
+# domain, or whose name matches an exclusion keyword, is suppressed before
+# drafting (never emailed): competitors, aggregators, directories.
+
+excluded_domains:
+  - google.com
+  - facebook.com
+  - linkedin.com
+  # add competitor / aggregator domains here
+
+name_exclusion_keywords: []
+
+# Wrong-segment signals, matched on word boundaries. A hit only suppresses when
+# the site shows no strong `segment_signals` evidence (see
+# src/enrich/vertical_match.negative_keyword_hit).
+out_of_scope_keywords:
+  - wholesale only
+  - trade supplier
+
+segment_signals:
+  - free quote
+  - private clients

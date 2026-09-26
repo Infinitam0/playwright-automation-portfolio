@@ -1,0 +1,7 @@
+line-length = 120
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+# if/else blocks kept as in the original scripts
+ignore = ["SIM108"]

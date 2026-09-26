@@ -1,0 +1,42 @@
+# Validation set — well-attested discontinued mobile/desktop apps that a
+# functioning scanner should surface above `min_score`. `scanner validate`
+# fails if fewer than `min_hit_count` of these reach their thresholds.
+#
+# Tune `min_score` after the first real 24h run; the defaults below are
+# calibrated for ~6/10 hits from a stock 24-hour HackerNews scan + an
+# AlternativeTo catalog confirmation pass.
+
+min_hit_count: 6
+default_min_score: 1.5
+
+apps:
+  - name: Wunderlist
+    min_score: 1.5
+    why: "Microsoft killed it; well-documented shutdown alternatives discussion"
+  - name: Periscope
+    min_score: 1.5
+    why: "Twitter shut it down in 2021; 100M+ download tier at peak"
+  - name: Vine
+    min_score: 1.5
+    why: "Discontinued 2017; replaced by TikTok"
+  - name: Mailbox
+    min_score: 1.5
+    why: "Dropbox killed it in 2016; pioneered swipe-to-snooze"
+  - name: Sunrise Calendar
+    min_score: 1.5
+    why: "Microsoft acquired and merged into Outlook"
+  - name: Google Inbox
+    min_score: 1.5
+    why: "Discontinued in 2019 in favor of Gmail"
+  - name: Apollo for Reddit
+    min_score: 1.5
+    why: "Killed by Reddit API pricing 2023; massive Reddit thread volume"
+  - name: Google Reader
+    min_score: 1.0
+    why: "Discontinued 2013; smaller window-decay-friendly threshold"
+  - name: Picasa
+    min_score: 1.0
+    why: "Discontinued 2016; smaller window-decay-friendly threshold"
+  - name: Stadia
+    min_score: 1.5
+    why: "Google Stadia shut down 2023"

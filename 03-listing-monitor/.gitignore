@@ -1,0 +1,3 @@
+# In addition to the repo-root .gitignore
+credentials/
+proxies.txt

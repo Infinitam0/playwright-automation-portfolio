@@ -1,0 +1,75 @@
+name: Permission bot
+
+on:
+  # Run when the permissions spreadsheet changes (the private deployment repo commits it)
+  push:
+    branches: [main]
+    paths:
+      - 'permissions.xlsx'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (validate only, no changes)'
+        required: false
+        default: false
+        type: boolean
+
+  # Daily execution on weekdays at 6 AM UTC
+  schedule:
+    - cron: '0 6 * * 1-5'
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.58.0-noble
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate permissions file
+        run: |
+          python -c "
+          from openpyxl import load_workbook
+          wb = load_workbook('permissions.xlsx')
+          ws = wb.active
+          headers = [cell.value for cell in ws[1]]
+          required = ['AccountName', 'ParentPath', 'CheckboxName', 'Action']
+          missing = [h for h in required if h not in headers]
+          if missing:
+              raise ValueError(f'Missing required columns: {missing}')
+          print(f'Validation passed. Found {ws.max_row - 1} permission rows.')
+          "
+
+      - name: Run permission automation
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          PORTAL_USER: ${{ secrets.PORTAL_USER }}
+          PORTAL_PASS: ${{ secrets.PORTAL_PASS }}
+          PORTAL_TOTP_SECRET: ${{ secrets.PORTAL_TOTP_SECRET }}
+          PORTAL_BASE_URL: ${{ secrets.PORTAL_BASE_URL }}
+          HEADLESS: 'true'
+          LOG_DIR: './logs/'
+        run: python permission_bot.py
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-logs-${{ github.run_id }}
+          path: logs/*.log
+          retention-days: 14
+
+      - name: Upload logs on success
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-logs-${{ github.run_id }}
+          path: logs/*.log
+          retention-days: 7

@@ -1,0 +1,2 @@
+# Listing monitor schedule: 4x daily at 06:00, 11:00, 16:00, 21:00 UTC
+0 6,11,16,21 * * * cd /app && python -u src/main.py 2>&1

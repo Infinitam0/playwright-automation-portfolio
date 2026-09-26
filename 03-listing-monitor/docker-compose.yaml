@@ -1,0 +1,23 @@
+services:
+  listing-monitor:
+    build: .
+    container_name: listing-monitor
+    restart: unless-stopped
+    # Run tini as PID 1 so orphaned processes get reaped.
+    #
+    # The image starts `supercronic --no-reap`, which deliberately delegates
+    # reaping to an init -- but no init was running, so nothing reaped at all.
+    # Each scan leaves its headless Chrome children behind (~16 zombie
+    # `chrome` / `chrome_crashpad` processes a day were observed). They are
+    # parented to a live supercronic, so they are never cleaned up until the
+    # container restarts.
+    #
+    # This completes the arrangement `--no-reap` already assumes rather than
+    # fighting it: tini becomes PID 1, orphans reparent to it, and it reaps
+    # them. Dropping `--no-reap` instead would work too, but it lives in the
+    # image rather than here.
+    init: true
+    env_file: .env
+    environment:
+      - LISTING_HEADLESS=true
+      - LISTING_GOOGLE_CREDENTIALS_PATH=/app/credentials/service_account.json

@@ -1,0 +1,12 @@
+# Discovery seeding by region. `priority_tier` feeds a scoring bonus so that,
+# even on a broad run, candidates in the priority regions rank first.
+# Each city becomes a "<search_term> <city>" discovery query. The names below
+# are placeholders: replace them with the regions and towns you target.
+
+provinces:
+  region-a:
+    priority_tier: 1
+    cities: [Springfield, Riverton]
+  region-b:
+    priority_tier: 2
+    cities: [Lakeside, Hillcrest]

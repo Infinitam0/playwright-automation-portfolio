@@ -1,0 +1,10 @@
+.env
+.auth/
+cache/
+output/
+state/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+auth_failure_trace.zip

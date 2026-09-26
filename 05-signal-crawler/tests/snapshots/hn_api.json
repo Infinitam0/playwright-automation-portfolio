@@ -1,0 +1,47 @@
+{
+  "hits": [
+    {
+      "_tags": ["comment", "author_jdoe"],
+      "author": "jdoe",
+      "comment_text": "What's a good alternative to Wunderlist? Microsoft just killed it.",
+      "created_at": "2026-05-10T14:30:00Z",
+      "created_at_i": 1747145400,
+      "objectID": "hn_comment_1001",
+      "parent_id": "hn_story_900",
+      "story_id": "hn_story_900"
+    },
+    {
+      "_tags": ["comment", "author_alice"],
+      "author": "alice",
+      "comment_text": "Periscope is dead. Moving away from Twitter as a whole.",
+      "created_at": "2026-05-09T09:15:00Z",
+      "created_at_i": 1747041300,
+      "objectID": "hn_comment_1002",
+      "parent_id": "hn_story_901",
+      "story_id": "hn_story_901"
+    },
+    {
+      "_tags": ["story", "author_bob"],
+      "author": "bob",
+      "title": "Mailbox is shutting down -- replacement for swipe-to-snooze?",
+      "url": "https://example.test/mailbox-shutdown",
+      "created_at": "2026-05-08T11:00:00Z",
+      "created_at_i": 1746958800,
+      "objectID": "hn_story_1003"
+    },
+    {
+      "_tags": ["comment", "author_eve"],
+      "comment_text": "Hit without an objectID should be skipped.",
+      "created_at": "2026-05-07T10:00:00Z",
+      "created_at_i": 1746868800,
+      "objectID": ""
+    }
+  ],
+  "nbHits": 3,
+  "page": 0,
+  "nbPages": 1,
+  "hitsPerPage": 100,
+  "processingTimeMS": 4,
+  "query": "alternative to",
+  "params": "query=alternative+to"
+}

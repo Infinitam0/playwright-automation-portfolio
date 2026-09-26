@@ -1,0 +1,46 @@
+# Per-vertical search terms (discovery queries) and site-match keywords (used to
+# confirm during enrichment that a company actually serves the vertical).
+# Keys must match VERTICALS in src/models.py. Write search terms in the language
+# your target market searches in.
+
+roofing:
+  label: Roofing
+  search_terms:
+    - "roofing contractor"
+  site_keywords:
+    - roofing
+    - roofer
+    - dakdekker         # Dutch; target sites are Dutch
+
+plumbing:
+  label: Plumbing
+  search_terms:
+    - "plumber"
+  site_keywords:
+    - plumbing
+    - plumber
+    - loodgieter        # Dutch
+
+electrical:
+  label: Electrical
+  search_terms:
+    - "electrician"
+  site_keywords:
+    - electrician
+    - electrical
+    - elektricien       # Dutch
+
+painting:
+  label: Painting
+  search_terms:
+    - "painting contractor"
+  site_keywords:
+    - painter
+    - painting
+    - schilder          # Dutch
+
+# Fallback queries that match any of the above.
+generic:
+  label: Trades
+  search_terms:
+    - "contractor"

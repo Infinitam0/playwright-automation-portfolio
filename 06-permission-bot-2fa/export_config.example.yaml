@@ -1,0 +1,14 @@
+# Copy to export_config.yaml (git-ignored) for export_permissions.py.
+
+# Tree path to expand to reach the user group in user management,
+# one node name per entry, from root to target group.
+user_group:
+  - "Org A Users"
+  - "Managers"
+
+# Users to export (exact display names in the user tree, case-sensitive).
+users:
+  - "Doe, J."
+
+# Output Excel file path (relative to the working directory, or absolute).
+output: "permissions_export.xlsx"

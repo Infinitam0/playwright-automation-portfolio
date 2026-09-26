@@ -1,0 +1,18 @@
+# Credentials (never commit)
+.env
+
+# Real permission data and exports stay out of this public repo
+*.xlsx
+export_config.yaml
+
+# Run output
+*.log
+logs/
+*.png
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/

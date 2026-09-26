@@ -1,0 +1,50 @@
+# Seed catalog for the disambiguation gate.
+# Populated from AlternativeTo's `discontinued` listings + the validation set.
+# Maintained by hand: the AlternativeTo scraper reads this list to decide which
+# app pages to check; nothing writes to it at runtime.
+#
+# Format:
+#   - name: <canonical app name>
+#     aliases: [<lowercase, common alternate spellings>]   # optional
+#     platform: <ios | android | unknown>                  # optional, defaults unknown
+#     status: <active | discontinued>                      # optional
+
+apps:
+  - name: Apollo for Reddit
+    aliases: [apollo, apollo for reddit, apollo app]
+    platform: ios
+    status: discontinued
+  - name: Periscope
+    platform: unknown
+    status: discontinued
+  - name: Vine
+    platform: unknown
+    status: discontinued
+  - name: Mailbox
+    aliases: [mailbox app]
+    platform: ios
+    status: discontinued
+  - name: Sunrise Calendar
+    aliases: [sunrise, sunrise calendar]
+    platform: unknown
+    status: discontinued
+  - name: Wunderlist
+    platform: unknown
+    status: discontinued
+  - name: Google Inbox
+    aliases: [inbox by gmail, gmail inbox]
+    platform: unknown
+    status: discontinued
+  - name: Sunlit
+    platform: ios
+    status: active
+  - name: Google Reader
+    platform: unknown
+    status: discontinued
+  - name: Picasa
+    platform: unknown
+    status: discontinued
+  - name: Stadia
+    aliases: [google stadia]
+    platform: unknown
+    status: discontinued

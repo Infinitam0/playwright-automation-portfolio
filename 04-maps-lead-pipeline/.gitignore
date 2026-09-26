@@ -1,0 +1,10 @@
+.env*
+!.env.example
+data/
+logs/
+auth/
+*.sqlite
+*.csv
+!config/suppression.csv
+__pycache__/
+.venv/

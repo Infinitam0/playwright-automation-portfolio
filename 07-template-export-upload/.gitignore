@@ -1,0 +1,5 @@
+config.yaml
+*.log
+*.xlsx
+docs/
+__pycache__/

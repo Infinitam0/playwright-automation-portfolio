@@ -1,0 +1,13 @@
+{
+  "name": "wizard-form-filler",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Walks a multi-step lead-intake wizard with Playwright and reports per-step screenshots, layout checks and content assertions as JSON.",
+  "scripts": {
+    "walk": "node wizard-filler.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}

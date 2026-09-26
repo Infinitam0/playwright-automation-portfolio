@@ -1,0 +1,50 @@
+# Cross-platform task runner — `just <recipe>`
+# Requires the `just` command runner.
+
+set windows-shell := ["pwsh.exe", "-NoLogo", "-NoProfile", "-Command"]
+
+default:
+    @just --list
+
+install:
+    uv pip install -e ".[dev]"
+    uv run playwright install chromium
+
+migrate:
+    uv run scanner migrate
+
+run *ARGS:
+    uv run scanner run {{ARGS}}
+
+run-once:
+    uv run scanner run --once
+
+status:
+    uv run scanner status
+
+apps:
+    uv run scanner apps top
+
+rebuild:
+    uv run scanner rebuild
+
+validate:
+    uv run scanner validate
+
+test:
+    uv run pytest -v
+
+test-cov:
+    uv run pytest --cov=scanner --cov-report=term-missing
+
+lint:
+    uv run ruff check scanner tests
+    uv run ruff format --check scanner tests
+
+fmt:
+    uv run ruff format scanner tests
+    uv run ruff check --fix scanner tests
+
+clean:
+    -Remove-Item -Recurse -Force .venv, __pycache__, .pytest_cache, *.egg-info -ErrorAction SilentlyContinue
+    -Remove-Item scanner.sqlite*, scanner.log -ErrorAction SilentlyContinue

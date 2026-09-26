@@ -1,0 +1,23 @@
+# Credentials (never include in image)
+.env
+
+# Logs
+*.log
+logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Debug screenshots
+*.png
+
+# Not needed in image
+README.md
+.env.example
+tests/
+.github/
+
+# Excel file is mounted at runtime, not baked into image
+*.xlsx

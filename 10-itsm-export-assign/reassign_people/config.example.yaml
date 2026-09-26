@@ -1,0 +1,15 @@
+# Copy to config.yaml and fill in. PORTAL_BASE_URL (env) overrides portal.base_url.
+browser:
+  user_data_dir: ""
+  profile_name: "Default"
+  channel: "msedge"
+  headless: false
+
+portal:
+  base_url: "https://portal.example.com/"
+  asset_type_id: "ASSET-TYPE-ID"
+  asset_id: "ASSET-ID"
+  asset_search_term: "Example Asset"
+
+input_file: "../export_unassigned.xlsx"   # written by ../main.py; names are read from column B
+assignment_delay_ms: 2000

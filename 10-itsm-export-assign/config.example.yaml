@@ -1,0 +1,20 @@
+# Copy to config.yaml and fill in. PORTAL_BASE_URL (env) overrides portal.base_url.
+browser:
+  user_data_dir: ""          # empty = the default Edge/Chrome user data dir
+  profile_name: "Default"
+  channel: "msedge"          # or: chrome
+  headless: false
+
+portal:
+  base_url: "https://portal.example.com/"
+  asset_type_id: "ASSET-TYPE-ID"         # fills SELECTORS["asset_type_option"] in navigate_assets.py
+  asset_id: "ASSET-ID"               # fills SELECTORS["asset_link"] in navigate_assets.py
+  asset_search_term: "Example Asset"
+  max_load_more_clicks: 100
+  load_more_wait_ms: 1500
+
+filter:
+  event_type: "unassigned"             # or: assigned
+  filter_date: null                  # e.g. "2000-01-01T00:00:00" to keep only events from that minute
+
+output_file: "export_unassigned.xlsx"

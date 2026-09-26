@@ -1,0 +1,24 @@
+# Copy to config.yaml and fill in. PORTAL_BASE_URL (env) overrides portal.entry_url.
+portal:
+  entry_url: https://portal.example.com/            # SSO entry page
+  calendar_url: https://calendar.portal.example.com/ # calendar app (separate domain, warmed up after SSO)
+  sso_button_name: Sign in with SSO                  # UI label on the target site
+  account_name: Jane Doe                             # account tile on the IdP picker, if shown
+
+browser:
+  headless: false
+  timeout_ms: 30000
+  channel: msedge            # or: chrome
+  profile_name: Default
+  user_data_dir: ""          # empty = the default Edge/Chrome user data dir
+
+user:
+  search_code: "USER_CODE"       # typed into the user search box
+
+calendar:
+  start_date: "2000-01-01"
+  end_date: "2000-12-31"
+
+output:
+  filename: appointments_export.xlsx
+  sheet_name: Appointments
