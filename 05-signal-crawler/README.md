@@ -2,7 +2,7 @@
 
 ## Problem
 
-Detect popular apps that have been discontinued, using the trail people leave when they go looking for a replacement: posts like *"alternative to X"*, *"X is shutting down"*, *"RIP X"*. The crawler has to cover several public platforms, respect their rate limits, store everything in one local database, and survive a hard crash (power loss, killed process) without losing or duplicating work.
+Detect popular apps that have been discontinued, using the trail people leave when they go looking for a replacement: posts like *"alternative to X"*, *"X is shutting down"*, *"RIP X"*. The crawler has to cover several public platforms, respect their rate limits, store everything in one local database, and survive a hard crash (power loss, killed process) without losing data or storing any item twice.
 
 ## How it works
 
@@ -18,7 +18,7 @@ Detect popular apps that have been discontinued, using the trail people leave wh
    - **Hacker News**: Algolia HN Search API over `httpx`, with no browser.
    - **Reddit**: `old.reddit.com` search pages through Playwright, paginated with `after=` tokens.
    - **AlternativeTo**: an app page per catalog entry through Playwright, checked for the "Discontinued" badge.
-5. Every item passes a per-source token-bucket rate limiter and is written to `inbox` with an idempotent UPSERT keyed on `(source, source_item_id)` plus a content hash. The source cursor is committed after each item, so the next job for that source starts where the last one stopped. A job recovered after a crash re-runs from the cursor it was queued with, and every item it fetches again hits the UPSERT, so nothing is duplicated.
+5. Every item passes a per-source token-bucket rate limiter and is written to `inbox` with an idempotent UPSERT keyed on `(source, source_item_id)` plus a content hash. The source cursor is committed after each item. For AlternativeTo it is the catalog position, so the next job continues from there; for Reddit and Hacker News it is the newest post time seen, so the next job fetches only newer posts. A job that is deferred, shut down or recovered after a crash keeps the cursor it was queued with and re-runs from there, and every item it fetches again hits the UPSERT, so nothing is stored twice.
 6. Failures are typed. `RateLimited` (HTTP 429/403 or a captcha) defers the job with a retry-after and sets a pause flag for that source. The source stays paused until `scanner resume --source <name>` clears the flag; there is no automatic resume. `SelectorBroken` marks the job failed and flags the source for review. Any other exception fails only that job, and the worker keeps running.
 7. `scanner extract` runs regex patterns and a fuzzy-matched app catalog over `inbox` to produce `signals`. The scorer then ranks candidates into `apps`. `scanner rebuild` re-derives both tables from `inbox`, so a bug in extraction or scoring never needs a re-crawl.
 8. `scanner pause|resume [--source]` toggles soft-pause flags in a `control` table. SIGINT/SIGTERM finishes the current item and returns the job to `pending`.

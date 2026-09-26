@@ -16,7 +16,7 @@ misreads the page produces a clean-looking list of false leads.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/diagram-dark.png">
-  <img src="docs/diagram.png" alt="Flowchart showing how the bot tiles a search area into map positions, splits any tile that hits the ~120-result cap into four smaller tiles, drops duplicate places before any page load, opens each remaining place once to read its website from embedded JSON, saves progress in SQLite so a stopped run can resume, and exports the leads to an Excel file.">
+  <img src="docs/diagram.png" alt="Flowchart showing how the bot tiles a search area into map positions, splits any tile that comes back near the ~120-result cap into four smaller tiles, drops duplicate places before any page load, opens each remaining place once to read its website from embedded JSON, saves progress in SQLite so a stopped run can resume, and exports the leads to an Excel file.">
 </picture>
 
 1. **Geocode**: `--location` becomes a lat/lng through OpenStreetMap

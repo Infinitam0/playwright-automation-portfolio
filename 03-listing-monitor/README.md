@@ -1,8 +1,8 @@
 # Real-estate listing monitor
 
 A scheduled Playwright bot that watches a real-estate listing site. It records
-new listings in a Google Sheet, tracks each listing until it sells or is
-withdrawn, and sends Telegram alerts.
+new listings in a Google Sheet, tracks each listing until it sells or leaves
+the market, and sends Telegram alerts.
 
 ## Problem
 
@@ -16,7 +16,7 @@ not report a listing as sold just because a crawl was cut short.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/diagram-dark.png">
-  <img src="docs/diagram.png" alt="State machine showing how each listing moves from new (sheet row plus Telegram alert) through available and under offer to sold or off the market, with every status change written back to its Google Sheet row.">
+  <img src="docs/diagram.png" alt="State diagram of a tracked listing: each new listing is added to the Google Sheet as Available (with an optional Telegram alert) and, when the opt-in daily check is on, closes as Sold or under offer, or as Off the market once a complete crawl no longer finds it.">
 </picture>
 
 1. **Load state**: open the Google Sheet (service account), write headers if
@@ -40,7 +40,7 @@ not report a listing as sold just because a crawl was cut short.
 6. **Write + notify**: insert new rows at row 2 (newest on top). Send a
    Telegram digest, split into as many messages as needed so that no listing is
    cut off.
-7. **Lifecycle sweep** (once a day): reconcile the open listings in the sheet
+7. **Lifecycle sweep** (once a day, opt-in): reconcile the open listings in the sheet
    against (a) the site's sold view (`status=` filter) and (b) disappearance
    from a *complete* search pass. Write status, close date, days-on-market and a
    sold flag in one batch update. A sanity check skips the disappearance signal
@@ -137,7 +137,7 @@ Key environment variables (all listed in `.env.example`):
 | `LISTING_GOOGLE_CREDENTIALS_PATH` / `_B64` | Service-account key path, or base64 for Docker |
 | `LISTING_TELEGRAM_ENABLED` / `_BOT_TOKEN` / `_CHAT_IDS` | Telegram alerts |
 | `LISTING_PROXY_*`, `LISTING_FINGERPRINT_ENABLED` | Proxy and fingerprint rotation |
-| `LISTING_LIFECYCLE_SWEEP_ENABLED` | Daily sold/withdrawn reconciliation |
+| `LISTING_LIFECYCLE_SWEEP_ENABLED` | Daily sold / off-the-market reconciliation (off by default) |
 
 Everything specific to the target site is in **`src/scraper/site_profile.py`**,
 filled with neutral placeholder values. Adapt that one file to the site you
@@ -150,7 +150,7 @@ monitor.
 | `src/main.py` | Orchestrator: sheet state, browser path, retry/proxy wiring, failure alerting |
 | `src/config.py` | `Settings` (pydantic-settings, `LISTING_` prefix), search URL builders |
 | `src/models.py` | `ListingSummary`, `ListingDetail`, `FullListing`, sheet schema |
-| `src/lifecycle.py` | Sold/withdrawn detection, days-on-market |
+| `src/lifecycle.py` | Sold / off-the-market detection, days-on-market |
 | `src/reporting.py` | Per-area summary tab, asking-vs-sold price delta reference |
 | `src/scraper/site_profile.py` | **All site-specific values** (placeholders): URL scheme, selectors, markers, labels, formats |
 | `src/scraper/browser.py` | Chromium + stealth launch, UA derivation, `BrowserSession` context rotation, cookie banner |
