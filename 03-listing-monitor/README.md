@@ -14,6 +14,11 @@ not report a listing as sold just because a crawl was cut short.
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagram-dark.png">
+  <img src="docs/diagram.png" alt="State machine showing how each listing moves from new (sheet row plus Telegram alert) through available and under offer to sold or off the market, with every status change written back to its Google Sheet row.">
+</picture>
+
 1. **Load state**: open the Google Sheet (service account), write headers if
    missing, and load every known listing id from column A. An empty sheet
    switches to backfill mode (up to 50 pages).

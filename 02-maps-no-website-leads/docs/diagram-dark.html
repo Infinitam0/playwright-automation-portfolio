@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maps lead finder flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #2d3142;   /* deep warm charcoal */
+      --color-ink:     #f5f5f5;   /* warm off-white */
+      --color-muted:   #bfc0c0;
+      --color-accent:  #f08a59;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', 'Noto Serif KR', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1200px; width: 100%; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 900px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Flowchart · Maps no-website lead finder</p>
+    <h1>How the lead finder sweeps an area</h1>
+
+    <svg viewBox="0 24 960 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="02-maps-no-website-leads-dark-title 02-maps-no-website-leads-dark-desc">
+      <title id="02-maps-no-website-leads-dark-title">How the Maps no-website lead finder sweeps an area</title>
+      <desc id="02-maps-no-website-leads-dark-desc">Flowchart showing how the bot tiles a search area into map positions, splits any tile that hits the ~120-result cap into four smaller tiles, drops duplicate places before any page load, opens each remaining place once to read its website from embedded JSON, saves progress in SQLite so a stopped run can resume, and exports the leads to an Excel file.</desc>
+      <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bfc0c0"/></marker>
+      </defs>
+      <rect x="0" y="24" width="960" height="360" fill="#2d3142"/>
+      <path d="M40 68 V60 H536 V68" fill="none" stroke="#8e98ac" stroke-width="0.8"/>
+      <text x="40" y="50" fill="#bfc0c0" font-size="8" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.14em">PHASE 1 · SEARCH RESULTS ONLY</text>
+      <path d="M576 68 V60 H920 V68" fill="none" stroke="#8e98ac" stroke-width="0.8"/>
+      <text x="576" y="50" fill="#bfc0c0" font-size="8" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.14em">PHASE 2 · ONE PAGE LOAD PER PLACE</text>
+      <line x1="168" y1="112" x2="208" y2="112" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="352" y1="112" x2="392" y2="112" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="536" y1="112" x2="576" y2="112" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="720" y1="112" x2="760" y2="112" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="256" y1="144" x2="256" y2="224" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="304" y1="224" x2="304" y2="144" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="464" y1="144" x2="464" y2="224" stroke="#bfc0c0" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+      <line x1="648" y1="144" x2="648" y2="224" stroke="#bfc0c0" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+      <rect x="176" y="178" width="72" height="12" rx="2" fill="#2d3142"/>
+      <text x="212" y="187" fill="#bfc0c0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">HIT ~120 CAP</text>
+      <rect x="312" y="178" width="72" height="12" rx="2" fill="#2d3142"/>
+      <text x="348" y="187" fill="#bfc0c0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">SEARCH AGAIN</text>
+      <rect x="472" y="178" width="64" height="12" rx="2" fill="#2d3142"/>
+      <text x="504" y="187" fill="#bfc0c0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NEW ONLY</text>
+      <rect x="564" y="178" width="76" height="12" rx="2" fill="#2d3142"/>
+      <text x="602" y="187" fill="#bfc0c0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DONE / FAILED</text>
+      <rect x="40" y="80" width="128" height="64" rx="6" fill="#2d3142"/>
+      <rect x="40" y="80" width="128" height="64" rx="6" fill="#393e53" stroke="#f5f5f5" stroke-width="1"/>
+      <text x="104" y="104" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Tile the area</text>
+      <text x="104" y="120" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">grid of map points</text>
+      <text x="104" y="132" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">clipped to radius</text>
+      <rect x="208" y="80" width="144" height="64" rx="6" fill="#2d3142"/>
+      <rect x="208" y="80" width="144" height="64" rx="6" fill="#393e53" stroke="#f5f5f5" stroke-width="1"/>
+      <text x="280" y="104" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Harvest a tile</text>
+      <text x="280" y="120" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">scroll the results,</text>
+      <text x="280" y="132" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">collect place ids</text>
+      <rect x="392" y="80" width="144" height="64" rx="6" fill="#2d3142"/>
+      <rect x="392" y="80" width="144" height="64" rx="6" fill="rgba(240,138,89,0.10)" stroke="#f08a59" stroke-width="1"/>
+      <text x="464" y="104" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Drop duplicates</text>
+      <text x="464" y="120" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">seen before? skip it,</text>
+      <text x="464" y="132" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">before any page load</text>
+      <rect x="576" y="80" width="144" height="64" rx="6" fill="#2d3142"/>
+      <rect x="576" y="80" width="144" height="64" rx="6" fill="#393e53" stroke="#f5f5f5" stroke-width="1"/>
+      <text x="648" y="104" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Open each place</text>
+      <text x="648" y="120" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">read its website from</text>
+      <text x="648" y="132" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">the embedded JSON</text>
+      <rect x="760" y="80" width="160" height="64" rx="32" fill="#2d3142"/>
+      <rect x="760" y="80" width="160" height="64" rx="32" fill="rgba(245,245,245,0.03)" stroke="rgba(245,245,245,0.30)" stroke-width="1"/>
+      <text x="840" y="104" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Excel lead list</text>
+      <text x="840" y="120" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">No Website · Social Only</text>
+      <text x="840" y="132" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Ordering Platform</text>
+      <rect x="208" y="224" width="144" height="64" rx="6" fill="#2d3142"/>
+      <rect x="208" y="224" width="144" height="64" rx="6" fill="rgba(240,138,89,0.10)" stroke="#f08a59" stroke-width="1"/>
+      <text x="280" y="254" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Split into 4 tiles</text>
+      <text x="280" y="270" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">one zoom level deeper</text>
+      <rect x="436" y="224" width="240" height="64" rx="6" fill="#2d3142"/>
+      <rect x="436" y="224" width="240" height="64" rx="6" fill="rgba(0,0,0,0.20)" stroke="#bfc0c0" stroke-width="1"/>
+      <text x="556" y="248" fill="#f5f5f5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Progress saved in SQLite</text>
+      <text x="556" y="264" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">tiles done · pending / done / failed</text>
+      <text x="556" y="276" fill="#bfc0c0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">a stopped run resumes where it left off</text>
+      <line x1="40" y1="320" x2="920" y2="320" stroke="rgba(245,245,245,0.12)" stroke-width="0.8"/>
+      <text x="40" y="348" fill="#bfc0c0" font-size="8" font-weight="500" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.18em">LEGEND</text>
+      <rect x="120" y="338" width="24" height="12" rx="2" fill="#393e53" stroke="#f5f5f5" stroke-width="1"/>
+      <text x="152" y="348" fill="#bfc0c0" font-size="9" font-family="'Geist', sans-serif" text-anchor="start">Step</text>
+      <rect x="204" y="338" width="24" height="12" rx="2" fill="rgba(240,138,89,0.10)" stroke="#f08a59" stroke-width="1"/>
+      <text x="236" y="348" fill="#bfc0c0" font-size="9" font-family="'Geist', sans-serif" text-anchor="start">What makes it efficient</text>
+      <rect x="364" y="338" width="24" height="12" rx="2" fill="rgba(0,0,0,0.20)" stroke="#bfc0c0" stroke-width="1"/>
+      <text x="396" y="348" fill="#bfc0c0" font-size="9" font-family="'Geist', sans-serif" text-anchor="start">Saved state</text>
+      <rect x="480" y="338" width="24" height="12" rx="6" fill="rgba(245,245,245,0.03)" stroke="rgba(245,245,245,0.30)" stroke-width="1"/>
+      <text x="512" y="348" fill="#bfc0c0" font-size="9" font-family="'Geist', sans-serif" text-anchor="start">Output</text>
+      <line x1="576" y1="344" x2="604" y2="344" stroke="#bfc0c0" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <text x="612" y="348" fill="#bfc0c0" font-size="9" font-family="'Geist', sans-serif" text-anchor="start">Flow</text>
+      <line x1="664" y1="344" x2="692" y2="344" stroke="#bfc0c0" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+      <text x="700" y="348" fill="#bfc0c0" font-size="9" font-family="'Geist', sans-serif" text-anchor="start">Saves progress</text>
+      </svg>
+  </div>
+</body>
+</html>

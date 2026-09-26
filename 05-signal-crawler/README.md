@@ -6,14 +6,19 @@ Detect popular apps that have been discontinued, using the trail people leave wh
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagram-dark.png">
+  <img src="docs/diagram.png" alt="State machine of a crawl job moving from Pending to Running to Done or Failed, where rate limits, safe shutdowns and crash recovery send it back to Pending, while the AlternativeTo, Reddit and Hacker News scrapers save every item and its resume cursor to one SQLite database.">
+</picture>
+
 1. `scanner migrate` creates a SQLite database in WAL mode from the numbered SQL files in `migrations/`.
-2. `scanner run` starts the orchestrator. It seeds one `sources` row per enabled platform (`config.toml`), recovers `running` jobs left behind by a crash, and queues one job per source, resuming from that source's saved cursor.
+2. `scanner run` starts the orchestrator. It seeds one `sources` row per enabled platform (`config.toml`), returns `running` jobs left behind by a crash (claimed 30+ minutes ago) to `pending`, and queues one job per source, resuming from that source's saved cursor.
 3. N asyncio workers claim jobs atomically from the SQLite job queue (`pending → running`).
 4. Each worker instantiates the scraper for the job's source (a self-registering "atom" in `scanner/scrapers/`) and streams its `RawItem`s:
    - **Hacker News**: Algolia HN Search API over `httpx`, with no browser.
    - **Reddit**: `old.reddit.com` search pages through Playwright, paginated with `after=` tokens.
    - **AlternativeTo**: an app page per catalog entry through Playwright, checked for the "Discontinued" badge.
-5. Every item passes a per-source token-bucket rate limiter and is written to `inbox` with an idempotent UPSERT keyed on `(source, source_item_id)` plus a content hash. The source cursor is committed after each item, so a restart resumes where it stopped.
+5. Every item passes a per-source token-bucket rate limiter and is written to `inbox` with an idempotent UPSERT keyed on `(source, source_item_id)` plus a content hash. The source cursor is committed after each item, so the next job for that source starts where the last one stopped. A job recovered after a crash re-runs from the cursor it was queued with, and every item it fetches again hits the UPSERT, so nothing is duplicated.
 6. Failures are typed. `RateLimited` (HTTP 429/403 or a captcha) defers the job with a retry-after and sets a pause flag for that source. The source stays paused until `scanner resume --source <name>` clears the flag; there is no automatic resume. `SelectorBroken` marks the job failed and flags the source for review. Any other exception fails only that job, and the worker keeps running.
 7. `scanner extract` runs regex patterns and a fuzzy-matched app catalog over `inbox` to produce `signals`. The scorer then ranks candidates into `apps`. `scanner rebuild` re-derives both tables from `inbox`, so a bug in extraction or scoring never needs a re-crawl.
 8. `scanner pause|resume [--source]` toggles soft-pause flags in a `control` table. SIGINT/SIGTERM finishes the current item and returns the job to `pending`.

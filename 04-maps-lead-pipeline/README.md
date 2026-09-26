@@ -6,6 +6,11 @@ Build a qualified B2B prospect list of local trade companies in a chosen sector 
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagram-dark.png">
+  <img src="docs/diagram.png" alt="Swimlane diagram of the lead pipeline: it discovers companies through the Places API, crawls their sites politely (robots.txt, per-host rate limit), scores them, has Claude draft an intro email and exports only clean drafts to a CSV, with suppression and a draft lint as safeguards and a person reviewing and sending every email by hand.">
+</picture>
+
 1. **Discover.** Each vertical × city pair becomes a search query (`config/verticals.yml` × `config/regions.yml`). The official Google Places API is the default source. An opt-in Playwright scraper for the Google Maps results feed covers what the API misses. That source is off by default (`LEADS_MAPS_ENABLED=true` turns it on) and is a technique demo: use it only in line with Google's terms of service. The Places API is the supported path.
 2. **Dedupe.** Every hit is upserted into SQLite and matched on *any* shared identifier: domain, normalised phone, or name + postcode. The same company found twice ends up as one row.
 3. **Enrich.** A polite async crawler fetches the homepage plus contact/about pages. It extracts emails (including obfuscated ones), certifications, served verticals and a phone number, and flags wrong-segment companies.
