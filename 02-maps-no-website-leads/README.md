@@ -97,6 +97,12 @@ artifacts:
 Those planning notes are not included here because they reference real
 scraped data.
 
+## Build time
+
+Built in **one evening**. The first code files were created at 21:20, and the first working Excel export came out 12 minutes later. The last code change was about 2 hours after the first file. That took **8 prompts, about 1 hour hands-on**. The next morning it had completed a full city-wide run.
+
+Measured from my Claude Code prompt history, git commits and file timestamps. "Hands-on" counts the time I spent prompting; Claude often kept working autonomously after that.
+
 ## Run it
 
 ```bash

@@ -37,7 +37,9 @@ Detect popular apps that have been discontinued, using the trail people leave wh
 
 ## Build time
 
-About **half an hour** from first to last commit, across 9 commits.
+**About 40 minutes** from the first prompt to the last of 9 commits, all in one sitting.
+
+Measured from my Claude Code prompt history, git commits and file timestamps. "Hands-on" counts the time I spent prompting; Claude often kept working autonomously after that.
 
 ## Run it
 

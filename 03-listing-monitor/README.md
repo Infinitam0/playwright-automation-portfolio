@@ -95,8 +95,9 @@ the private deployment.
 
 ## Build time
 
-About five and a half months from first to last commit (18 commits), covering
-the initial build and later maintenance.
+The first working version took **2 days, about 4.5 hours hands-on** (50 prompts). Over the following 5 months it got about 10 more hours of occasional improvements, 18 commits in total.
+
+Measured from my Claude Code prompt history, git commits and file timestamps. "Hands-on" counts the time I spent prompting; Claude often kept working autonomously after that.
 
 ## Run it
 

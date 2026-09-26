@@ -32,6 +32,10 @@ The step runner handles text inputs, radio/checkbox labels and buttons. It has n
 
 I built this with Claude Code while building a site with a multi-step intake wizard. The source project has a `CLAUDE.md` with project rules, and its history has many `Co-Authored-By: Claude` commits. The script came out of the usual loop: plan the check, have Claude write it, run it against staging at mobile and desktop sizes, then fix the script or the site based on what the screenshots and JSON showed. For this portfolio version, Claude generalized the original walk into the `STEPS` / `RESULT_ASSERTIONS` data and stripped site-specific details. I then ran it end to end against a local mock wizard, covering both the main path and the fallback path.
 
+## Build time
+
+Written in a single pass inside a larger QA session: the file was created and last saved within the same minute. It took **minutes**, not hours.
+
 ## Run it
 
 ```bash

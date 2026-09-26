@@ -32,7 +32,9 @@ I built this with Claude Code. The source project has a `CLAUDE.md` that sets th
 
 ## Build time
 
-About 10 weeks of calendar time from first to last commit (32 commits), mostly incremental hardening. That span also covers a dashboard that is not part of this extract.
+The first version took **about a week, about 5.5 hours hands-on**. After that came roughly 10 weeks of occasional hardening (32 commits in total), including a dashboard that is not part of this extract.
+
+Measured from my Claude Code prompt history, git commits and file timestamps. "Hands-on" counts the time I spent prompting; Claude often kept working autonomously after that.
 
 ## Run it
 

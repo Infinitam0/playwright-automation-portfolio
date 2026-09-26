@@ -6,20 +6,22 @@ Ten browser-automation bots I built with AI coding agents (Claude Code), from 20
 
 ## The bots
 
-| # | Bot | Stack | What it shows |
-|---|---|---|---|
-| 01 | [Multi-step wizard form-filler](01-wizard-form-filler/) | Node, Playwright | Data-driven step list, fill/click by label and role, a screenshot per step, assertions on the result screen, console and network error capture, JSON report |
-| 02 | [Maps "no website" lead finder](02-maps-no-website-leads/) | Python, Patchright | Grid-tiling a radius, splitting saturated tiles, dedupe before detail loads, parsing Maps' embedded JSON, SQLite resume, Excel export, 60 tests |
-| 03 | [Real-estate listing monitor](03-listing-monitor/) | Python, Playwright async | Paginated search plus detail pages, lifecycle tracking (new, price change, sold), stealth patches with fingerprint and proxy rotation, backoff, **push to Google Sheets + Telegram alerts**, Docker + cron |
-| 04 | [Maps lead pipeline](04-maps-lead-pipeline/) | Python, Patchright | Discover → crawl → enrich → score → LLM-drafted email → CSV. The website crawl respects robots.txt and rate limits per host. It never auto-sends |
-| 05 | [Signal crawler](05-signal-crawler/) | Python, Playwright | AlternativeTo, Reddit and HN scrapers behind a crash-safe, resumable job queue in SQLite, 111 tests. **Built in 33 minutes** |
-| 06 | [Permission bot with auto-2FA](06-permission-bot-2fa/) | Python, Playwright sync | Excel-driven permission sync (checks and unchecks tree items per account), headless login with a **TOTP** code, **OAuth2 REST API client**, Docker + GitHub Actions cron, 51 tests |
-| 07 | [Template export + bulk re-upload](07-template-export-upload/) | Python, Playwright async | Reusing an SSO session, reading a virtualized grid through its JS API, per-item file downloads, bulk uploads with retries |
-| 08 | [Resumable calendar scraper](08-calendar-scraper/) | Python, Playwright async | Date navigation, `wait_for_function`, popup extraction, incremental Excel writes, resume from the last date |
-| 09 | [Authenticated portal docs crawler](09-portal-docs-crawler/) | Python, Playwright async | Login with a reused `storage_state`, re-login on expiry, a trace on failure, resumable crawl, HTML → Markdown, 51 tests |
-| 10 | [ITSM export + re-assign bot](10-itsm-export-assign/) | Python, Playwright async | Nested iframes, "load more" pagination, filtering to Excel, a companion bot that fills autocomplete dialogs. **Re-assign bot built in ~40 min** |
+| # | Bot | Stack | What it shows | Build time |
+|---|---|---|---|---|
+| 01 | [Multi-step wizard form-filler](01-wizard-form-filler/) | Node, Playwright | Data-driven step list, fill/click by label and role, a screenshot per step, assertions on the result screen, console and network error capture, JSON report | minutes |
+| 02 | [Maps "no website" lead finder](02-maps-no-website-leads/) | Python, Patchright | Grid-tiling a radius, splitting saturated tiles, dedupe before detail loads, parsing Maps' embedded JSON, SQLite resume, Excel export, 60 tests | ~2 h (1 h hands-on) |
+| 03 | [Real-estate listing monitor](03-listing-monitor/) | Python, Playwright async | Paginated search plus detail pages, lifecycle tracking (new, price change, sold), stealth patches with fingerprint and proxy rotation, backoff, **push to Google Sheets + Telegram alerts**, Docker + cron | 2 days (4.5 h hands-on) |
+| 04 | [Maps lead pipeline](04-maps-lead-pipeline/) | Python, Patchright | Discover → crawl → enrich → score → LLM-drafted email → CSV. The website crawl respects robots.txt and rate limits per host. It never auto-sends | ~1 week (5.5 h hands-on) |
+| 05 | [Signal crawler](05-signal-crawler/) | Python, Playwright | AlternativeTo, Reddit and HN scrapers behind a crash-safe, resumable job queue in SQLite, 111 tests | ~40 min |
+| 06 | [Permission bot with auto-2FA](06-permission-bot-2fa/) | Python, Playwright sync | Excel-driven permission sync (checks and unchecks tree items per account), headless login with a **TOTP** code, **OAuth2 REST API client**, Docker + GitHub Actions cron, 51 tests | 5 working days (v1.0 on day 2) |
+| 07 | [Template export + bulk re-upload](07-template-export-upload/) | Python, Playwright async | Reusing an SSO session, reading a virtualized grid through its JS API, per-item file downloads, bulk uploads with retries | n/a |
+| 08 | [Resumable calendar scraper](08-calendar-scraper/) | Python, Playwright async | Date navigation, `wait_for_function`, popup extraction, incremental Excel writes, resume from the last date | n/a |
+| 09 | [Authenticated portal docs crawler](09-portal-docs-crawler/) | Python, Playwright async | Login with a reused `storage_state`, re-login on expiry, a trace on failure, resumable crawl, HTML → Markdown, 51 tests | ~4 working days |
+| 10 | [ITSM export + re-assign bot](10-itsm-export-assign/) | Python, Playwright async | Nested iframes, "load more" pagination, filtering to Excel, a companion bot that fills autocomplete dialogs | ~40 min (re-assign bot) |
 
 [`shared/`](shared/) holds the SSO session-reuse helper used by 07, 08 and 10. It copies a signed-in browser profile, launches a persistent context and navigates with retries.
+
+Build times come from my Claude Code prompt history, git commits and file timestamps. 07 and 08 were imported to git in a single commit, so there is no data for them.
 
 ## How I work with AI
 
