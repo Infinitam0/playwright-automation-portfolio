@@ -22,7 +22,7 @@ I don't type the Playwright code line by line. I use Claude Code (and sometimes 
 - Offline unit tests cover the parsers and the resume/dedupe logic, so later refactors don't break the parts a run can't see.
 
 ## 5. Keep a lessons file
-When the agent makes a mistake I correct it once. Then it writes the rule into `tasks/lessons.md` or `CLAUDE.md`, for example "this portal's grid is virtualized, read rows through the grid API, not the DOM". The next bot starts with that knowledge.
+When the agent makes a mistake I correct it once. Then it writes the rule into `tasks/lessons.md` or `CLAUDE.md`, for example "this portal's grid is virtualized, read rows through the grid API, not the DOM". The next AI coding agent's session starts with that knowledge.
 
 ## Why this is fast
 The recording and the MCP exploration remove the guesswork about selectors. Plan mode removes rework. The small-run loop moves debugging onto the agent. A simple scraper or form-fill bot (login, loop over rows or pages, export or push) is usually a **same-day** job this way. Most of that time goes into verifying against the real portal, not writing code.
